@@ -1,0 +1,54 @@
+# File e directory da ignorare durante la build Docker
+
+# Target directory (viene ricostruito durante la build)
+target/
+
+# IDE files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Maven wrapper (viene copiato esplicitamente)
+# .mvn/
+# mvnw
+# mvnw.cmd
+
+# Logs
+logs/
+*.log
+
+# Documentation
+README.md
+docs/
+
+# Docker files (non necessari dentro l'immagine)
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Node modules (se presenti)
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Test coverage
+coverage/
+
+# Temporary files
+*.tmp
+*.temp
