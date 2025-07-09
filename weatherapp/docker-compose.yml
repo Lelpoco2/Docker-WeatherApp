@@ -1,54 +1,16 @@
 services:
-  # Database MySQL
-  mysql:
-    image: mysql:8.0
-    container_name: weatherapp-mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: weatherapp
-      MYSQL_USER: weatheruser
-      MYSQL_PASSWORD: weatherpass
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./docker/mysql/init:/docker-entrypoint-initdb.d
-    networks:
-      - weatherapp-network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      timeout: 10s
-      retries: 5
-      interval: 30s
-
   # Applicazione Spring Boot
   weatherapp:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: weatherapp-spring
-    depends_on:
-      mysql:
-        condition: service_healthy
     environment:
-      # Configurazione database
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/weatherapp?useSSL=false&serverTimezone=UTC
-      SPRING_DATASOURCE_USERNAME: weatheruser
-      SPRING_DATASOURCE_PASSWORD: weatherpass
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
-      
-      # Configurazione JPA
-      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-      SPRING_JPA_SHOW_SQL: true
-      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL8Dialect
-      
       # Configurazione applicazione
       SPRING_PROFILES_ACTIVE: docker
       SERVER_PORT: 8080
-      
       # Configurazione logging
       LOGGING_LEVEL_COM_ALESSIO_WEATHERAPP: DEBUG
-      
     ports:
       - "8080:8080"
     volumes:
@@ -62,10 +24,6 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
-
-volumes:
-  mysql_data:
-    driver: local
 
 networks:
   weatherapp-network:

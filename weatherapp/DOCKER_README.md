@@ -34,13 +34,7 @@ docker-compose up --build -d
 - **URL**: http://localhost:8080
 - **Health Check**: http://localhost:8080/actuator/health
 
-### 💾 Database MySQL
-- **Host**: localhost
-- **Port**: 3306
-- **Database**: weatherapp
-- **Username**: weatheruser
-- **Password**: weatherpass
-- **Root Password**: rootpassword
+
 
 ## 🛠️ Comandi Utili
 
@@ -70,8 +64,7 @@ docker-compose ps
 # Entra nel container dell'applicazione
 docker-compose exec weatherapp bash
 
-# Entra nel container MySQL
-docker-compose exec mysql mysql -u weatheruser -p weatherapp
+
 
 # Visualizza i log in tempo reale
 docker-compose logs -f
@@ -90,25 +83,21 @@ docker-compose build weatherapp
 - **Health Check**: Controllo automatico dello stato dell'applicazione
 
 ### Docker Compose
-- **Servizio MySQL**: Database persistente con volume
 - **Servizio WeatherApp**: Applicazione Spring Boot
 - **Rete**: Comunicazione sicura tra i servizi
-- **Volume**: Persistenza dei dati MySQL e log dell'applicazione
+- **Volume**: Persistenza dei log dell'applicazione
 
 ## 🔧 Configurazione
 
 ### Profili Spring Boot
 - **dev**: Profilo di sviluppo con H2 database
-- **docker**: Profilo Docker con MySQL
+- **docker**: Profilo Docker con H2 database (ora predefinito)
 
 ### Variabili d'ambiente
 Puoi personalizzare la configurazione modificando le variabili d'ambiente in `docker-compose.yml`:
 
 ```yaml
 environment:
-  SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/weatherapp
-  SPRING_DATASOURCE_USERNAME: weatheruser
-  SPRING_DATASOURCE_PASSWORD: weatherpass
   SPRING_PROFILES_ACTIVE: docker
   LOGGING_LEVEL_COM_ALESSIO_WEATHERAPP: DEBUG
 ```
@@ -124,9 +113,7 @@ weatherapp/
 ├── start.sh                   # Script avvio Linux/macOS
 ├── stop.bat                   # Script arresto Windows
 ├── docker/
-│   └── mysql/
-│       └── init/
-│           └── 01-init.sql    # Script inizializzazione MySQL
+│   # (nessuna directory mysql, solo log applicazione)
 └── logs/                      # Directory log applicazione
 ```
 
@@ -139,20 +126,9 @@ docker-compose ps
 
 # Controlla i log
 docker-compose logs weatherapp
-docker-compose logs mysql
-
-# Verifica la connessione al database
-docker-compose exec mysql mysql -u weatheruser -p weatherapp
 ```
 
-### Problemi di connessione al database
-```bash
-# Riavvia solo il database
-docker-compose restart mysql
 
-# Verifica che il database sia healthy
-docker-compose ps
-```
 
 ### Reset completo
 ```bash
@@ -181,5 +157,4 @@ Per aggiornare l'applicazione:
 
 ### Log
 - **Applicazione**: `docker-compose logs -f weatherapp`
-- **Database**: `docker-compose logs -f mysql`
 - **File di log**: `./logs/weatherapp.log`
