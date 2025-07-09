@@ -22,10 +22,10 @@ COPY src ./src
 RUN mvn clean package -DskipTests
 
 # Fase 2: Runtime dell'applicazione
-FROM openjdk:17-jdk-slim
+FROM eclipse-temurin:17-jre-alpine
 
-# Installa curl per health check
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+# Installa curl per health check (usando apk su Alpine)
+RUN apk add --no-cache curl
 
 # Crea un utente non-root per sicurezza
 RUN addgroup --system spring && adduser --system spring --ingroup spring

@@ -1,15 +1,16 @@
 package com.alessio.weatherapp.service;
 
-import com.alessio.weatherapp.model.OpenMeteoResponse; // Modello per la risposta grezza dell'API Open-Meteo
-import com.alessio.weatherapp.model.WeatherData; // Modello per i dati meteo usati dal frontend
-import org.springframework.stereotype.Service; // Permette di dichiarare la classe come service Spring
-import org.springframework.web.reactive.function.client.WebClient; // Usa WebClient
-import org.springframework.web.util.UriComponentsBuilder; // Per costruire URL con parametri
+import java.time.LocalDate; // Modello per la risposta grezza dell'API Open-Meteo
+import java.time.format.DateTimeFormatter; // Modello per i dati meteo usati dal frontend
+import java.util.ArrayList; // Permette di dichiarare la classe come service Spring
+import java.util.List; // Usa WebClient
 
-import java.time.LocalDate; // Per gestire le date
-import java.time.format.DateTimeFormatter; // Per formattare le date
-import java.util.ArrayList; // Lista dinamica
-import java.util.List; // Interfaccia lista
+import org.springframework.stereotype.Service; // Per costruire URL con parametri
+import org.springframework.web.reactive.function.client.WebClient; // Per gestire le date
+import org.springframework.web.util.UriComponentsBuilder; // Per formattare le date
+
+import com.alessio.weatherapp.model.OpenMeteoResponse; // Lista dinamica
+import com.alessio.weatherapp.model.WeatherData; // Interfaccia lista
 
 @Service // Indica che questa classe è un service Spring
 public class WeatherService {
@@ -103,28 +104,37 @@ public class WeatherService {
     public LocationInfo getLocationInfo(String cityName) {
         // Switch sulle città supportate
         switch (cityName.toLowerCase()) {
-            case "roma":
+            case "roma" -> {
                 return new LocationInfo("Roma", 41.9028, 12.4964); // Roma
-            case "milano":
+            }
+            case "milano" -> {
                 return new LocationInfo("Milano", 45.4642, 9.1900); // Milano
-            case "napoli":
+            }
+            case "napoli" -> {
                 return new LocationInfo("Napoli", 40.8518, 14.2681); // Napoli
-            case "torino":
+            }
+            case "torino" -> {
                 return new LocationInfo("Torino", 45.0703, 7.6869); // Torino
-            case "firenze":
+            }
+            case "firenze" -> {
                 return new LocationInfo("Firenze", 43.7696, 11.2558); // Firenze
-            case "venezia":
+            }
+            case "venezia" -> {
                 return new LocationInfo("Venezia", 45.4408, 12.3155); // Venezia
-            case "bologna":
+            }
+            case "bologna" -> {
                 return new LocationInfo("Bologna", 44.4949, 11.3426); // Bologna
-            case "palermo":
+            }
+            case "palermo" -> {
                 return new LocationInfo("Palermo", 38.1157, 13.3615); // Palermo
-            case "genova":
+            }
+            case "genova" -> {
                 return new LocationInfo("Genova", 44.4056, 8.9463); // Genova
-            case "bari":
+            }
+            case "bari" -> {
                 return new LocationInfo("Bari", 41.1171, 16.8719); // Bari
-            default:
-                // Se la città non è supportata, lancia un'eccezione
+            }
+            default -> // Se la città non è supportata, lancia un'eccezione
                 throw new IllegalArgumentException("Città non supportata. Città supportate: Roma, Milano, Napoli, Torino, Firenze, Venezia, Bologna, Palermo, Genova, Bari");
         }
     }
