@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dettaglio Meteo</title>
+    <link rel="stylesheet" href="/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1 id="city-title"><span class="icon">🌆</span> Meteo città</h1>
+        <div id="loader" class="loader" style="display:none;"></div>
+        <div id="result" class="result-card"></div>
+        <canvas id="tempChart" style="margin-top:2rem;max-width:100%;display:none;"></canvas>
+        <div style="margin-top:1.5rem;">
+            <a href="/index.html" class="back-link">← Torna alla selezione città</a>
+        </div>
+    </div>
+    <footer>
+        <p>Powered by <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a> | <span class="footer-icon">🌦️</span></p>
+    </footer>
+    <script src="/city.js"></script>
+</body>
+</html>

@@ -1,28 +1,54 @@
-document.getElementById('getWeather').addEventListener('click', function() {
-    const city = document.getElementById('city').value;
-    const resultDiv = document.getElementById('result');
-    resultDiv.innerHTML = 'Caricamento...';
-    fetch(`/api/weather?city=${city}`)
-        .then(response => {
-            if (!response.ok) {
-                return response.text().then(text => { throw new Error(text || 'Errore nella richiesta'); });
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (!data.dailyWeather || data.dailyWeather.length === 0) {
-                resultDiv.innerHTML = '<p>Nessun dato disponibile.</p>';
-                return;
-            }
-            let html = `<h2>Meteo per ${data.location}</h2>`;
-            html += '<table><thead><tr><th>Data</th><th>Max (°C)</th><th>Min (°C)</th><th>Media (°C)</th></tr></thead><tbody>';
-            data.dailyWeather.forEach(day => {
-                html += `<tr><td>${day.date}</td><td>${day.temperatureMax.toFixed(1)}</td><td>${day.temperatureMin.toFixed(1)}</td><td>${day.temperatureMean.toFixed(1)}</td></tr>`;
-            });
-            html += '</tbody></table>';
-            resultDiv.innerHTML = html;
-        })
-        .catch(err => {
-            resultDiv.innerHTML = `<p style='color:red;'>${err.message}</p>`;
+
+
+// Lista delle città
+const cities = [
+    'roma', 'milano', 'napoli', 'torino', 'firenze', 'venezia', 'bologna', 'palermo', 'genova', 'bari'
+];
+
+// Funzione per scegliere icona meteo base (puoi migliorare con dati reali)
+function getWeatherIcon(desc) {
+    if (!desc) return '☁️';
+    desc = desc.toLowerCase();
+    if (desc.includes('pioggia')) return '🌧️';
+    if (desc.includes('sereno')) return '☀️';
+    if (desc.includes('nuvol')) return '☁️';
+    if (desc.includes('neve')) return '❄️';
+    return '☁️';
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Click sulle card
+    const cards = document.querySelectorAll('.city-card');
+    cards.forEach(card => {
+        card.addEventListener('click', function() {
+            const city = card.getAttribute('data-city');
+            window.location.href = `/city.html?city=${city}`;
         });
+    });
+
+    // Carica dati meteo per ogni città
+    cities.forEach(city => {
+        fetch(`/api/weather?city=${city}`)
+            .then(response => response.ok ? response.json() : null)
+            .then(data => {
+                if (!data || !data.dailyWeather || data.dailyWeather.length === 0) return;
+                // Prendi il giorno più recente
+                const today = data.dailyWeather[data.dailyWeather.length - 1];
+                // Temperatura media
+                const temp = today.temperatureMean ? today.temperatureMean.toFixed(1) : '--';
+                // Umidità (se disponibile)
+                const hum = today.humidity !== undefined ? today.humidity + '%' : '--%';
+                // Icona (se disponibile)
+                let icon = '☁️';
+                if (today.description) icon = getWeatherIcon(today.description);
+                // Aggiorna card
+                const tempEl = document.getElementById(`temp-${city}`);
+                const humEl = document.getElementById(`hum-${city}`);
+                const iconEl = document.getElementById(`icon-${city}`);
+                if (tempEl) tempEl.textContent = temp + '°C';
+                if (humEl) humEl.textContent = hum + ' 💧';
+                if (iconEl) iconEl.textContent = icon;
+            })
+            .catch(() => {});
+    });
 });

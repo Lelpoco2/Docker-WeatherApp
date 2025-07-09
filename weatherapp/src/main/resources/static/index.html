@@ -8,26 +8,74 @@
 </head>
 <body>
     <div class="container">
-        <h1>Weather REST App</h1>
-        <p>Ottieni le temperature delle ultime due settimane per una città italiana</p>
-        <div class="form-group">
-            <label for="city">Città:</label>
-            <select id="city">
-                <option value="roma">Roma</option>
-                <option value="milano">Milano</option>
-                <option value="napoli">Napoli</option>
-                <option value="torino">Torino</option>
-                <option value="firenze">Firenze</option>
-                <option value="venezia">Venezia</option>
-                <option value="bologna">Bologna</option>
-                <option value="palermo">Palermo</option>
-                <option value="genova">Genova</option>
-                <option value="bari">Bari</option>
-            </select>
-            <button id="getWeather">Ottieni Meteo</button>
+        <h1><span class="icon">☀️</span> Weather REST App</h1>
+        <p class="subtitle">Clicca su una città per vedere i dettagli meteo e il grafico delle temperature</p>
+        <div class="city-grid">
+            <div class="city-card" data-city="roma">
+                <div class="city-name">Roma</div>
+                <div class="city-icon" id="icon-roma">☁️</div>
+                <div class="city-temp" id="temp-roma">--°C</div>
+                <div class="city-humidity" id="hum-roma">--% 💧</div>
+            </div>
+            <div class="city-card" data-city="milano">
+                <div class="city-name">Milano</div>
+                <div class="city-icon" id="icon-milano">☁️</div>
+                <div class="city-temp" id="temp-milano">--°C</div>
+                <div class="city-humidity" id="hum-milano">--% 💧</div>
+            </div>
+            <div class="city-card" data-city="napoli">
+                <div class="city-name">Napoli</div>
+                <div class="city-icon" id="icon-napoli">☁️</div>
+                <div class="city-temp" id="temp-napoli">--°C</div>
+                <div class="city-humidity" id="hum-napoli">--% 💧</div>
+            </div>
+            <div class="city-card" data-city="torino">
+                <div class="city-name">Torino</div>
+                <div class="city-icon" id="icon-torino">☁️</div>
+                <div class="city-temp" id="temp-torino">--°C</div>
+                <div class="city-humidity" id="hum-torino">--% 💧</div>
+            </div>
+            <div class="city-card" data-city="firenze">
+                <div class="city-name">Firenze</div>
+                <div class="city-icon" id="icon-firenze">☁️</div>
+                <div class="city-temp" id="temp-firenze">--°C</div>
+                <div class="city-humidity" id="hum-firenze">--% 💧</div>
+            </div>
+            <div class="city-card" data-city="venezia">
+                <div class="city-name">Venezia</div>
+                <div class="city-icon" id="icon-venezia">☁️</div>
+                <div class="city-temp" id="temp-venezia">--°C</div>
+                <div class="city-humidity" id="hum-venezia">--% 💧</div>
+            </div>
+            <div class="city-card" data-city="bologna">
+                <div class="city-name">Bologna</div>
+                <div class="city-icon" id="icon-bologna">☁️</div>
+                <div class="city-temp" id="temp-bologna">--°C</div>
+                <div class="city-humidity" id="hum-bologna">--% 💧</div>
+            </div>
+            <div class="city-card" data-city="palermo">
+                <div class="city-name">Palermo</div>
+                <div class="city-icon" id="icon-palermo">☁️</div>
+                <div class="city-temp" id="temp-palermo">--°C</div>
+                <div class="city-humidity" id="hum-palermo">--% 💧</div>
+            </div>
+            <div class="city-card" data-city="genova">
+                <div class="city-name">Genova</div>
+                <div class="city-icon" id="icon-genova">☁️</div>
+                <div class="city-temp" id="temp-genova">--°C</div>
+                <div class="city-humidity" id="hum-genova">--% 💧</div>
+            </div>
+            <div class="city-card" data-city="bari">
+                <div class="city-name">Bari</div>
+                <div class="city-icon" id="icon-bari">☁️</div>
+                <div class="city-temp" id="temp-bari">--°C</div>
+                <div class="city-humidity" id="hum-bari">--% 💧</div>
+            </div>
         </div>
-        <div id="result"></div>
     </div>
+    <footer>
+        <p>Powered by <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a> | <span class="footer-icon">🌦️</span></p>
+    </footer>
     <script src="/app.js"></script>
 </body>
 </html>

@@ -34,17 +34,17 @@ public class WeatherService {
         LocalDate endDate = LocalDate.now();
         // Calcola la data di inizio (due settimane fa)
         LocalDate startDate = endDate.minusWeeks(2);
-        
+
         // Costruisce l'URL per la chiamata all'API OpenMeteo con i parametri richiesti
         String url = UriComponentsBuilder.fromUriString(OPEN_METEO_API_URL)
-                .queryParam("latitude", latitude) // Aggiunge la latitudine
-                .queryParam("longitude", longitude) // Aggiunge la longitudine
-                .queryParam("start_date", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE)) // Data inizio
-                .queryParam("end_date", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE)) // Data fine
-                .queryParam("daily", "temperature_2m_max,temperature_2m_min,temperature_2m_mean") // Parametri giornalieri richiesti
-                .queryParam("timezone", "auto") // Timezone automatica
+                .queryParam("latitude", latitude)
+                .queryParam("longitude", longitude)
+                .queryParam("start_date", startDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .queryParam("end_date", endDate.format(DateTimeFormatter.ISO_LOCAL_DATE))
+                .queryParam("daily", "temperature_2m_max,temperature_2m_min,temperature_2m_mean,relative_humidity_2m_mean,weathercode")
+                .queryParam("timezone", "auto")
                 .build()
-                .toUriString(); // Converte in stringa l'URL
+                .toUriString();
         
         try {
             // Effettua la chiamata HTTP GET e deserializza la risposta in OpenMeteoResponse
@@ -74,26 +74,45 @@ public class WeatherService {
      * @return Oggetto WeatherData con lista di DailyWeather
      */
     private WeatherData convertToWeatherData(String location, OpenMeteoResponse response) {
-        List<WeatherData.DailyWeather> dailyWeatherList = new ArrayList<>(); // Lista dei dati giornalieri
-        
-        OpenMeteoResponse.Daily daily = response.getDaily(); // Ottiene la sezione "daily" dalla risposta
-        
-        // Cicla su tutti i giorni disponibili
+        List<WeatherData.DailyWeather> dailyWeatherList = new ArrayList<>();
+        OpenMeteoResponse.Daily daily = response.getDaily();
         for (int i = 0; i < daily.getTime().size(); i++) {
-            LocalDate date = LocalDate.parse(daily.getTime().get(i)); // Data del giorno
-            double maxTemp = daily.getTemperatureMax().get(i); // Temperatura massima
-            double minTemp = daily.getTemperatureMin().get(i); // Temperatura minima
-            double meanTemp = daily.getTemperatureMean().get(i); // Temperatura media
-            
-            // Crea un oggetto DailyWeather e lo aggiunge alla lista
+            LocalDate date = LocalDate.parse(daily.getTime().get(i));
+            double maxTemp = daily.getTemperatureMax().get(i);
+            double minTemp = daily.getTemperatureMin().get(i);
+            double meanTemp = daily.getTemperatureMean().get(i);
+            Double humidity = null;
+            if (daily.getHumidityMean() != null && daily.getHumidityMean().size() > i) {
+                humidity = daily.getHumidityMean().get(i);
+            }
+            String description = null;
+            if (daily.getWeatherCode() != null && daily.getWeatherCode().size() > i) {
+                description = mapWeatherCodeToDescription(daily.getWeatherCode().get(i));
+            }
             WeatherData.DailyWeather dailyWeather = new WeatherData.DailyWeather(
-                    date, maxTemp, minTemp, meanTemp
+                date, maxTemp, minTemp, meanTemp, humidity, description
             );
             dailyWeatherList.add(dailyWeather);
         }
-        
-        // Restituisce l'oggetto WeatherData con la lista di DailyWeather
         return new WeatherData(location, dailyWeatherList);
+
+    }
+
+    // Mappa i codici weathercode di Open-Meteo in descrizioni testuali
+    private String mapWeatherCodeToDescription(Integer code) {
+        if (code == null) return "";
+        // Codici principali Open-Meteo: https://open-meteo.com/en/docs#api_form
+        return switch (code) {
+            case 0 -> "Sereno";
+            case 1, 2, 3 -> "Parzialmente nuvoloso";
+            case 45, 48 -> "Nebbia";
+            case 51, 53, 55, 56, 57 -> "Pioviggine";
+            case 61, 63, 65, 66, 67 -> "Pioggia";
+            case 71, 73, 75, 77, 85, 86 -> "Neve";
+            case 80, 81, 82 -> "Rovesci";
+            case 95, 96, 99 -> "Temporale";
+            default -> "Nuvoloso";
+        };
     }
     
     /**
