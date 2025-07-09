@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather REST App</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Weather REST App</h1>
+        <p>Ottieni le temperature delle ultime due settimane per una città italiana</p>
+        <div class="form-group">
+            <label for="city">Città:</label>
+            <select id="city">
+                <option value="roma">Roma</option>
+                <option value="milano">Milano</option>
+                <option value="napoli">Napoli</option>
+                <option value="torino">Torino</option>
+                <option value="firenze">Firenze</option>
+                <option value="venezia">Venezia</option>
+                <option value="bologna">Bologna</option>
+                <option value="palermo">Palermo</option>
+                <option value="genova">Genova</option>
+                <option value="bari">Bari</option>
+            </select>
+            <button id="getWeather">Ottieni Meteo</button>
+        </div>
+        <div id="result"></div>
+    </div>
+    <script src="/app.js"></script>
+</body>
+</html>
