@@ -3,23 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dettaglio Meteo</title>
+    <title>Weather App - Dettaglio Città</title>
     <link rel="stylesheet" href="/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container">
-        <h1 id="city-title"><span class="icon">🌆</span> Meteo città</h1>
-        <div id="loader" class="loader" style="display:none;"></div>
-        <div id="result" class="result-card"></div>
-        <canvas id="tempChart" style="margin-top:2rem;max-width:100%;display:none;"></canvas>
-        <div style="margin-top:1.5rem;">
-            <a href="/index.html" class="back-link">← Torna alla selezione città</a>
-        </div>
+    <div class="app-container">
+        <header class="app-header">
+            <h1 class="app-title" id="cityTitle">
+                <span class="weather-icon">�️</span>
+                Dettaglio Meteo
+            </h1>
+            <nav class="breadcrumb">
+                <a href="/index.html" class="breadcrumb-link">Home</a>
+                <span class="breadcrumb-separator">•</span>
+                <span class="breadcrumb-current" id="breadcrumbCity">Città</span>
+            </nav>
+        </header>
+
+        <main class="main-content">
+            <div class="loading-container" id="loadingContainer">
+                <div class="spinner"></div>
+                <p>Caricamento dati meteo...</p>
+            </div>
+
+            <div class="weather-detail" id="weatherDetail" style="display: none;">
+                <div class="weather-summary" id="weatherSummary">
+                    <!-- Generato dinamicamente da JavaScript -->
+                </div>
+
+                <div class="weather-table-container">
+                    <h2 class="section-title">Storico Temperature (14 giorni)</h2>
+                    <div class="table-wrapper" id="tableWrapper">
+                        <!-- Tabella generata dinamicamente -->
+                    </div>
+                </div>
+
+                <div class="weather-chart-container">
+                    <h2 class="section-title">Grafico Temperature</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="temperatureChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="error-message" id="errorMessage" style="display: none;">
+                <div class="error-icon">⚠️</div>
+                <h3>Errore nel caricamento</h3>
+                <p id="errorText">Si è verificato un errore durante il caricamento dei dati meteo.</p>
+            </div>
+        </main>
+
+        <footer class="app-footer">
+            <p>
+                Powered by <a href="https://open-meteo.com/" target="_blank">Open-Meteo API</a>
+                <span class="footer-icon">🌦️</span>
+            </p>
+        </footer>
     </div>
-    <footer>
-        <p>Powered by <a href="https://open-meteo.com/" target="_blank">Open-Meteo</a> | <span class="footer-icon">🌦️</span></p>
-    </footer>
+
     <script src="/city.js"></script>
 </body>
 </html>
