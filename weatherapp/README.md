@@ -158,3 +158,33 @@ Per aggiornare l'applicazione:
 ### Log
 - **Applicazione**: `docker-compose logs -f weatherapp`
 - **File di log**: `./logs/weatherapp.log`
+
+## 🗄️ Persistenza dei dati meteorologici
+
+L'applicazione salva automaticamente i dati meteo recuperati dalle API in un database H2 in modalità file, garantendo la persistenza tra i riavvii del container.
+
+- **Database**: H2 (file, percorso `/app/data/weatherdb` in Docker)
+- **Configurazione**: già inclusa nei profili `dev` e `docker`.
+- **Console H2**: accessibile su [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+  - JDBC URL: `jdbc:h2:file:./data/weatherdb` (locale) oppure `jdbc:h2:file:/app/data/weatherdb` (Docker)
+  - User: `sa` (senza password)
+
+### Endpoint REST per dati storici
+
+- `GET /api/weather/history?city=...`<br>
+  Restituisce la lista dei dati meteo storici salvati per la città.
+- `GET /api/weather/latest/{city}`<br>
+  Restituisce l'ultimo dato meteo salvato per la città.
+- `GET /api/weather/stats/popular-locations`<br>
+  Restituisce le statistiche sulle località più cercate.
+
+### Visualizzazione dati storici
+
+- **Pagina web**: [http://localhost:8080/history.html](http://localhost:8080/history.html)
+  - Permette di selezionare una città e visualizzare tutti i dati meteo storici registrati.
+  - Mostra anche le statistiche delle località più popolari.
+
+### Note
+- I dati vengono salvati automaticamente ogni volta che viene effettuata una richiesta meteo tramite l'applicazione.
+- La persistenza è abilitata sia in locale che in Docker.
+- I dati sono consultabili sia tramite API che tramite interfaccia web.
