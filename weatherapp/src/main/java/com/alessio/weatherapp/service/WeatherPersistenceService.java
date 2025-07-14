@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.alessio.weatherapp.entity.DailyWeatherEntity;
 import com.alessio.weatherapp.entity.WeatherDataEntity;
 import com.alessio.weatherapp.model.WeatherData;
-import com.alessio.weatherapp.repository.DailyWeatherRepository;
 import com.alessio.weatherapp.repository.WeatherDataRepository;
 
 @Service
@@ -25,9 +24,6 @@ public class WeatherPersistenceService {
     
     @Autowired
     private WeatherDataRepository weatherDataRepository;
-    
-    @Autowired
-    private DailyWeatherRepository dailyWeatherRepository;
     
     /**
      * Salva i dati meteo nel database
