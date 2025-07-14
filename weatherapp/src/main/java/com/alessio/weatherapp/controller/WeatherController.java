@@ -40,6 +40,7 @@ public class WeatherController {
      * Endpoint per recuperare i dati meteo storici di una città dal database
      */
     @GetMapping("/api/weather/history")
+    @SuppressWarnings("CallToPrintStackTrace")
     public ResponseEntity<List<WeatherData>> getWeatherHistory(@RequestParam("city") String city) {
         try {
             List<WeatherData> historicalData = weatherService.getHistoricalWeatherData(city);
@@ -54,6 +55,7 @@ public class WeatherController {
      * Endpoint per recuperare gli ultimi dati meteo salvati di una città
      */
     @GetMapping("/api/weather/latest/{city}")
+    @SuppressWarnings("CallToPrintStackTrace")
     public ResponseEntity<WeatherData> getLatestWeatherData(@PathVariable String city) {
         try {
             WeatherData latestData = weatherService.getLatestWeatherDataFromDB(city);
@@ -72,6 +74,7 @@ public class WeatherController {
      * Endpoint per recuperare le statistiche delle località più cercate
      */
     @GetMapping("/api/weather/stats/popular-locations")
+    @SuppressWarnings("CallToPrintStackTrace")
     public ResponseEntity<List<WeatherPersistenceService.LocationStats>> getPopularLocations() {
         try {
             List<WeatherPersistenceService.LocationStats> stats = weatherService.getMostSearchedLocations();
