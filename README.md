@@ -1,0 +1,1 @@
+# OPEN THE /weatherapp DIR FOR FULL README
