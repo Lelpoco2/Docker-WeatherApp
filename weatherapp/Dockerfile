@@ -33,6 +33,10 @@ RUN addgroup --system spring && adduser --system spring --ingroup spring
 # Imposta la directory di lavoro
 WORKDIR /app
 
+# Crea le directory per il database e i log con i permessi corretti
+RUN mkdir -p /app/data /app/logs && \
+    chown -R spring:spring /app/data /app/logs
+
 # Copia il JAR dall'immagine di build
 COPY --from=build /app/target/weatherapp-*.jar app.jar
 

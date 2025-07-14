@@ -5,6 +5,9 @@ import java.time.format.DateTimeFormatter; // Modello per i dati meteo usati dal
 import java.util.ArrayList; // Permette di dichiarare la classe come service Spring
 import java.util.List; // Usa WebClient
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service; // Per costruire URL con parametri
 import org.springframework.web.reactive.function.client.WebClient; // Per gestire le date
 import org.springframework.web.util.UriComponentsBuilder; // Per formattare le date
@@ -15,8 +18,12 @@ import com.alessio.weatherapp.model.WeatherData; // Interfaccia lista
 @Service // Indica che questa classe è un service Spring
 public class WeatherService {
     
+    private static final Logger logger = LoggerFactory.getLogger(WeatherService.class);
     private final WebClient webClient; // Usa WebClient invece di RestTemplate
     private static final String OPEN_METEO_API_URL = "https://api.open-meteo.com/v1/forecast"; // URL base dell'API Open-Meteo
+    
+    @Autowired
+    private WeatherPersistenceService weatherPersistenceService;
     
     public WeatherService() {
         this.webClient = WebClient.create(); // Inizializza WebClient
@@ -30,6 +37,8 @@ public class WeatherService {
      * @return Oggetto WeatherData con i dati meteo
      */
     public WeatherData getWeatherData(String location, double latitude, double longitude) {
+        logger.info("Recuperando dati meteo per {}", location);
+        
         // Calcola la data di fine (oggi)
         LocalDate endDate = LocalDate.now();
         // Calcola la data di inizio (due settimane fa)
@@ -56,13 +65,26 @@ public class WeatherService {
             
             // Se la risposta e i dati giornalieri sono validi, converte in WeatherData
             if (response != null && response.getDaily() != null) {
-                return convertToWeatherData(location, response);
+                WeatherData weatherData = convertToWeatherData(location, response);
+                
+                // Salva i dati nel database
+                try {
+                    weatherPersistenceService.saveWeatherData(weatherData);
+                    logger.info("Dati meteo salvati nel database per {}", location);
+                } catch (Exception e) {
+                    logger.error("Errore durante il salvataggio dei dati nel database per {}: {}", 
+                               location, e.getMessage());
+                    // Non interrompiamo il flusso se il salvataggio fallisce
+                }
+                
+                return weatherData;
             }
             // Se non ci sono dati, restituisce un oggetto vuoto
             return new WeatherData(location, new ArrayList<>());
             
         } catch (Exception e) {
             // In caso di errore, lancia un'eccezione con il messaggio
+            logger.error("Errore nel recupero dei dati meteorologici per {}: {}", location, e.getMessage());
             throw new RuntimeException("Errore nel recupero dei dati meteorologici: " + e.getMessage());
         }
     }
@@ -96,6 +118,35 @@ public class WeatherService {
         }
         return new WeatherData(location, dailyWeatherList);
 
+    }
+
+    /**
+     * Recupera i dati meteo storici per una località dal database
+     */
+    public List<WeatherData> getHistoricalWeatherData(String location) {
+        logger.info("Recuperando dati meteo storici per {}", location);
+        return weatherPersistenceService.getWeatherDataByLocation(location)
+                .stream()
+                .map(weatherPersistenceService::convertToModel)
+                .toList();
+    }
+    
+    /**
+     * Recupera i dati meteo più recenti per una località dal database
+     */
+    public WeatherData getLatestWeatherDataFromDB(String location) {
+        logger.info("Recuperando ultimi dati meteo salvati per {}", location);
+        return weatherPersistenceService.getLatestWeatherDataByLocation(location)
+                .map(weatherPersistenceService::convertToModel)
+                .orElse(null);
+    }
+    
+    /**
+     * Recupera le statistiche delle località più cercate
+     */
+    public List<WeatherPersistenceService.LocationStats> getMostSearchedLocations() {
+        logger.info("Recuperando statistiche località più cercate");
+        return weatherPersistenceService.getMostSearchedLocations();
     }
 
     // Mappa i codici weathercode di Open-Meteo in descrizioni testuali

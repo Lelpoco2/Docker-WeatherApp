@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="it" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dati Storici - Weather App</title>
+    <link rel="stylesheet" th:href="@{/style.css}">
+    <style>
+        .history-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .history-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            padding: 20px;
+        }
+        
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        .location-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        .query-date {
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+        
+        .daily-data {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .day-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .day-date {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        
+        .weather-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 0.9em;
+        }
+        
+        .temp-max { color: #e74c3c; }
+        .temp-min { color: #3498db; }
+        .temp-mean { color: #f39c12; }
+        .humidity { color: #27ae60; }
+        .description { 
+            grid-column: 1 / -1;
+            font-style: italic;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .stats-section {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+            padding: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .stat-card {
+            background: #ecf0f1;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .stat-label {
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        .back-button {
+            background: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 20px 0;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .back-button:hover {
+            background: #2980b9;
+        }
+        
+        .no-data {
+            text-align: center;
+            color: #7f8c8d;
+            font-style: italic;
+            padding: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div class="history-container">
+        <a href="/" class="back-button">← Torna alla Home</a>
+        
+        <h1>Dati Meteorologici Storici</h1>
+        
+        <!-- Sezione selezione città -->
+        <div class="history-card">
+            <h2>Seleziona una città</h2>
+            <select id="citySelect" onchange="loadHistoryData()">
+                <option value="">-- Seleziona una città --</option>
+                <option value="roma">Roma</option>
+                <option value="milano">Milano</option>
+                <option value="napoli">Napoli</option>
+                <option value="torino">Torino</option>
+                <option value="firenze">Firenze</option>
+                <option value="venezia">Venezia</option>
+                <option value="bologna">Bologna</option>
+                <option value="palermo">Palermo</option>
+                <option value="genova">Genova</option>
+                <option value="bari">Bari</option>
+            </select>
+        </div>
+        
+        <!-- Sezione statistiche popolari -->
+        <div class="stats-section">
+            <h2>Località più cercate</h2>
+            <div id="popularStats" class="stats-grid">
+                <div class="no-data">Caricamento statistiche...</div>
+            </div>
+        </div>
+        
+        <!-- Sezione dati storici -->
+        <div id="historyData">
+            <div class="no-data">Seleziona una città per visualizzare i dati storici</div>
+        </div>
+    </div>
+
+    <script>
+        // Carica le statistiche delle località più popolari al caricamento della pagina
+        window.onload = function() {
+            loadPopularStats();
+        };
+        
+        function loadPopularStats() {
+            fetch('/api/weather/stats/popular-locations')
+                .then(response => response.json())
+                .then(data => {
+                    const statsContainer = document.getElementById('popularStats');
+                    if (data && data.length > 0) {
+                        statsContainer.innerHTML = data.map(stat => `
+                            <div class="stat-card">
+                                <div class="stat-number">${stat.searchCount}</div>
+                                <div class="stat-label">${stat.location}</div>
+                            </div>
+                        `).join('');
+                    } else {
+                        statsContainer.innerHTML = '<div class="no-data">Nessuna statistica disponibile</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Errore nel caricamento delle statistiche:', error);
+                    document.getElementById('popularStats').innerHTML = 
+                        '<div class="no-data">Errore nel caricamento delle statistiche</div>';
+                });
+        }
+        
+        function loadHistoryData() {
+            const city = document.getElementById('citySelect').value;
+            const historyContainer = document.getElementById('historyData');
+            
+            if (!city) {
+                historyContainer.innerHTML = '<div class="no-data">Seleziona una città per visualizzare i dati storici</div>';
+                return;
+            }
+            
+            historyContainer.innerHTML = '<div class="no-data">Caricamento dati storici...</div>';
+            
+            fetch(`/api/weather/history?city=${encodeURIComponent(city)}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        historyContainer.innerHTML = data.map(weatherData => `
+                            <div class="history-card">
+                                <div class="history-header">
+                                    <div class="location-name">${weatherData.location}</div>
+                                    <div class="query-date">Recuperato il: ${new Date().toLocaleDateString('it-IT')}</div>
+                                </div>
+                                <div class="daily-data">
+                                    ${weatherData.dailyWeather.map(day => `
+                                        <div class="day-card">
+                                            <div class="day-date">${formatDate(day.date)}</div>
+                                            <div class="weather-info">
+                                                <div class="temp-max">Max: ${day.temperatureMax.toFixed(1)}°C</div>
+                                                <div class="temp-min">Min: ${day.temperatureMin.toFixed(1)}°C</div>
+                                                <div class="temp-mean">Media: ${day.temperatureMean.toFixed(1)}°C</div>
+                                                ${day.humidity ? `<div class="humidity">Umidità: ${day.humidity.toFixed(0)}%</div>` : ''}
+                                                ${day.description ? `<div class="description">${day.description}</div>` : ''}
+                                            </div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        historyContainer.innerHTML = `<div class="no-data">Nessun dato storico trovato per ${city.charAt(0).toUpperCase() + city.slice(1)}</div>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Errore nel caricamento dei dati storici:', error);
+                    historyContainer.innerHTML = '<div class="no-data">Errore nel caricamento dei dati storici</div>';
+                });
+        }
+        
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('it-IT', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+        }
+    </script>
+</body>
+</html>

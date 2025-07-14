@@ -98,8 +98,39 @@ body {
     font-size: 1.25rem;
     color: rgba(255, 255, 255, 0.9);
     font-weight: 400;
-    max-width: 600px;
-    margin: 0 auto;
+    margin-bottom: 1.5rem;
+}
+
+/* Nuovi stili per i link nell'header */
+.header-actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.history-link,
+.db-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--white);
+    text-decoration: none;
+    border-radius: var(--border-radius);
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: var(--transition);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.history-link:hover,
+.db-link:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
 }
 
 /* Breadcrumb */
